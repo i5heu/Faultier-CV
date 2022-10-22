@@ -1,6 +1,6 @@
-![](media/logo.png)
-
 # Faultier-CV
+
+![](media/logo.png)
 
 This is a CV generator that allows you to generate and modify your CV in seconds without any overhead.
 
