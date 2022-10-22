@@ -21,7 +21,6 @@
     "@types/marked": "^4.0.7",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
-    "jspdf": "^2.5.1",
     "markdown-it": "^13.0.1",
     "marked": "^4.1.1",
     "monaco-editor": "^0.34.1",
