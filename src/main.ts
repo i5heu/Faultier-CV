@@ -2,21 +2,21 @@ import { editor } from "monaco-editor";
 import { Store, defaults } from "./default";
 import { marked } from "marked";
 
-console.log("Hello World");
-let iframeHTMLRO = "";
-const iframe = document.createElement("iframe");
-document.getElementById("preview").innerHTML = "";
-document.getElementById("preview").appendChild(iframe);
-
 const store: Store = defaults;
-
-buildPreview();
 
 const editorInstance = editor.create(document.getElementById("editor"), {
   value: store.markdown,
   language: "markdown",
   theme: "vs-dark",
 });
+
+console.log("Hello World");
+
+const iframe = document.createElement("iframe");
+document.getElementById("preview").innerHTML = "";
+document.getElementById("preview").appendChild(iframe);
+
+buildPreview();
 
 const fileSelect = document.getElementById("file") as HTMLSelectElement;
 fileSelect.addEventListener("change", (e) => {
@@ -36,9 +36,16 @@ fileSelect.addEventListener("change", (e) => {
   }
 });
 
+let loading = false;
+
 editorInstance.getModel().onDidChangeContent((e) => {
-  setCurrentFile(editorInstance.getValue());
-  buildPreview();
+  if (loading) return;
+  loading = true;
+  setTimeout(() => {
+    setCurrentFile(editorInstance.getValue());
+    buildPreview();
+    loading = false;
+  }, 1000);
 });
 
 function setCurrentFile(val: string) {
@@ -69,9 +76,7 @@ function buildPreview() {
   html = html.replace("{{markdown}}", markdownParsed);
 
   iframe.contentWindow.document.write(html);
-  iframeHTMLRO = html;
   iframe.contentWindow.document.close();
-  console.log("HIT");
 }
 
 document.getElementById("save").addEventListener("click", () => {
@@ -83,7 +88,7 @@ document.getElementById("save").addEventListener("click", () => {
 });
 
 document.getElementById("html").addEventListener("click", () => {
-  const blob = new Blob([iframeHTMLRO], { type: "text/plain" });
+  const blob = new Blob([], { type: "text/plain" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "index.html";
