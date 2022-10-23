@@ -105,6 +105,25 @@ document.getElementById("save").addEventListener("click", () => {
   a.click();
 });
 
+document.getElementById("import").addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json";
+  input.onchange = (e) => {
+    const file = (e.target as HTMLInputElement).files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result as string;
+      const store = JSON.parse(text);
+      editorInstance.setValue(store.markdown);
+      setTabAsActive("markdown");
+      buildPreview();
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+});
+
 document.getElementById("html").addEventListener("click", () => {
   const blob = new Blob([iframeHTMLPassive], { type: "text/html" });
   const a = document.createElement("a");
