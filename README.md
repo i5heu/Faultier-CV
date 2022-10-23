@@ -6,6 +6,8 @@ This is a CV generator that allows you to generate and modify your CV in seconds
 
 The name Faultier-CV is a combination of the german word "Faultier" (which means "sloth" and directly translated is "lazy animal") and the abbreviation CV (which stands for "Curriculum Vitae").
 
+[Try it out](https://i5heu.github.io/Faultier-CV/dist/index.html)
+
 ## Features
 - Generate and Edit your CV in seconds
 - Save your CV as a JSON file and load it again later
