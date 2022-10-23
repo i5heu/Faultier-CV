@@ -18,8 +18,9 @@ window.onresize = function () {
 console.log("Hello World");
 let iframeHTMLPassive = "";
 const iframe = document.createElement("iframe");
-document.getElementById("preview").innerHTML = "";
-document.getElementById("preview").appendChild(iframe);
+const preview = document.getElementById("preview");
+preview.innerHTML = "";
+preview.appendChild(iframe);
 
 buildPreview();
 
