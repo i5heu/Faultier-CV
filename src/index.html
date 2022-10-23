@@ -18,7 +18,8 @@
       body {
         display: grid;
         grid-template-rows: 5em auto;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 50% 50%;
+        max-width: 100vw;
       }
       #editor,
       body > div {
@@ -33,7 +34,12 @@
         display: flex;
         align-items: center;
         padding: 5px;
+        gap: 5px;
         box-sizing: border-box;
+      }
+      #head a {
+        color: #fff;
+        text-decoration: none;
       }
       #head .spacer {
         margin-left: 3em;
@@ -46,31 +52,72 @@
         width: 100%;
         height: 100%;
       }
+      .actionButtons,
+      #fileTabs {
+        display: flex;
+        flex-direction: row;
+        gap: 1em;
+        align-items: center;
+        background-color: #131313;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        padding: 5px;
+        box-sizing: border-box;
+      }
+      .actionButtons > div,
+      #fileTabs > div {
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+        border: 1px solid #fff;
+        padding: 3px;
+      }
+      .actionButtons > div:hover,
+      #fileTabs .active {
+        background-color: #fff;
+        color: #131313;
+      }
     </style>
   </head>
   <body>
     <div id="head">
+      <img
+        src="https://i5heu.github.io/Faultier-CV/media/logo.png"
+        height="80"
+        alt=""
+      />
       <h1>Faultier-CV</h1>
-      <div class="spacer">
-        <a href="https://github.com/i5heu/Faultier-CV">Github</a>
-      </div>
+      <div class="spacer"></div>
+      <a href="https://github.com/i5heu/Faultier-CV">Github</a>
+      <!-- Place this tag where you want the button to render. -->
+      <a
+        class="github-button"
+        href="https://github.com/i5heu/Faultier-CV"
+        data-size="large"
+        data-show-count="true"
+        aria-label="Star i5heu/Faultier-CV on GitHub"
+        >Star</a
+      >
     </div>
     <div id="left">
-      <div>
-        <select name="file" id="file">
-          <option value="markdown">Markdown</option>
-          <option value="html">HTML</option>
-          <option value="css">CSS</option>
-        </select>
+      <div id="fileTabs">
+        <div data-file="html">html</div>
+        <div data-file="css">css</div>
+        <div data-file="markdown">markdown</div>
       </div>
       <div id="editor"></div>
     </div>
     <div>
-      <div>
-        <button id="save">Save</button>
-        <button id="html">html</button>
+      <div class="actionButtons">
+        <div id="save">Save</div>
+        <div id="html">html</div>
       </div>
       <div id="preview">Loading...</div>
     </div>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
   </body>
 </html>
