@@ -3,24 +3,29 @@ import { Store, defaults } from "./default";
 import { marked } from "marked";
 
 const store: Store = defaults;
+const fileTabs = document.getElementById("fileTabs") as HTMLDivElement;
+setTabAsActive("markdown");
 
 const editorInstance = editor.create(document.getElementById("editor"), {
   value: store.markdown,
   language: "markdown",
   theme: "vs-dark",
 });
+window.onresize = function () {
+  editorInstance.layout();
+};
 
 console.log("Hello World");
-
+let iframeHTMLPassive = "";
 const iframe = document.createElement("iframe");
 document.getElementById("preview").innerHTML = "";
 document.getElementById("preview").appendChild(iframe);
 
 buildPreview();
 
-const fileSelect = document.getElementById("file") as HTMLSelectElement;
-fileSelect.addEventListener("change", (e) => {
-  const val = fileSelect.value;
+fileTabs.addEventListener("click", (e: any) => {
+  const val = e.target.innerText;
+  setTabAsActive(val);
   switch (val) {
     case "markdown":
       editorInstance.setValue(store.markdown);
@@ -49,7 +54,7 @@ editorInstance.getModel().onDidChangeContent((e) => {
 });
 
 function setCurrentFile(val: string) {
-  const file = fileSelect.value;
+  const file = getCurrentFile();
   switch (file) {
     case "markdown":
       store.markdown = val;
@@ -67,6 +72,17 @@ function setCurrentFile(val: string) {
   editor.setModelLanguage(editorInstance.getModel(), file);
 }
 
+function getCurrentFile() {
+  return fileTabs.querySelector(".active").innerHTML;
+}
+
+function setTabAsActive(file: string) {
+  const active = fileTabs.querySelector(".active");
+  if (active) active.classList.remove("active");
+  const newActive = fileTabs.querySelector(`[data-file='${file}']`);
+  newActive.classList.add("active");
+}
+
 function buildPreview() {
   let html = store.html;
   const css = store.css;
@@ -77,6 +93,7 @@ function buildPreview() {
 
   iframe.contentWindow.document.write(html);
   iframe.contentWindow.document.close();
+  iframeHTMLPassive = html;
 }
 
 document.getElementById("save").addEventListener("click", () => {
@@ -88,7 +105,7 @@ document.getElementById("save").addEventListener("click", () => {
 });
 
 document.getElementById("html").addEventListener("click", () => {
-  const blob = new Blob([], { type: "text/plain" });
+  const blob = new Blob([iframeHTMLPassive], { type: "text/html" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "index.html";
