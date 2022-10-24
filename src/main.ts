@@ -107,7 +107,7 @@ function linksWithNewTab(html: string) {
   links.forEach((link) => {
     link.setAttribute("target", "_blank");
   });
-  return doc.body.innerHTML;
+  return doc.documentElement.innerHTML;
 }
 
 document.getElementById("save").addEventListener("click", () => {
