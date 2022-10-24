@@ -2,7 +2,9 @@ import { editor } from "monaco-editor";
 import { Store, defaults } from "./default";
 import { marked } from "marked";
 
-const store: Store = defaults;
+const store: Store = getStorageFromBrowser()
+  ? getStorageFromBrowser()
+  : defaults;
 const fileTabs = document.getElementById("fileTabs") as HTMLDivElement;
 setTabAsActive("markdown");
 
@@ -92,9 +94,20 @@ function buildPreview() {
   html = html.replace("{{css}}", css);
   html = html.replace("{{markdown}}", markdownParsed);
 
-  iframe.contentWindow.document.write(html);
+  iframe.contentWindow.document.write(linksWithNewTab(html));
   iframe.contentWindow.document.close();
   iframeHTMLPassive = html;
+  saveStorageInBrowser();
+}
+
+function linksWithNewTab(html: string) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const links = doc.querySelectorAll("a");
+  links.forEach((link) => {
+    link.setAttribute("target", "_blank");
+  });
+  return doc.body.innerHTML;
 }
 
 document.getElementById("save").addEventListener("click", () => {
@@ -131,3 +144,13 @@ document.getElementById("html").addEventListener("click", () => {
   a.download = "index.html";
   a.click();
 });
+
+function saveStorageInBrowser() {
+  localStorage.setItem("store", JSON.stringify(store));
+}
+
+function getStorageFromBrowser() {
+  const store = localStorage.getItem("store");
+  if (store) return JSON.parse(store);
+  return null;
+}
