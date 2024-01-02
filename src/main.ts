@@ -17,7 +17,7 @@ window.onresize = function () {
   editorInstance.layout();
 };
 
-console.log("Hello World");
+console.log("Application starting...");
 let iframeHTMLPassive = "";
 const iframe = document.createElement("iframe");
 const preview = document.getElementById("preview");
@@ -114,7 +114,7 @@ document.getElementById("save").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(store)], { type: "text/plain" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "store.json";
+  a.download = "Faultier-CV-store.json";
   a.click();
 });
 
@@ -141,7 +141,7 @@ document.getElementById("html").addEventListener("click", () => {
   const blob = new Blob([iframeHTMLPassive], { type: "text/html" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "index.html";
+  a.download = "Faultier-CV-CV.html";
   a.click();
 });
 
