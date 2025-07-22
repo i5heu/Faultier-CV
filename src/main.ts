@@ -21,6 +21,7 @@ console.log("Application starting...");
 let iframeHTMLPassive = "";
 const iframe = document.createElement("iframe");
 const preview = document.getElementById("preview");
+const pdfPreview = document.getElementById("pdfPreview");
 preview.innerHTML = "";
 preview.appendChild(iframe);
 
@@ -52,6 +53,7 @@ editorInstance.getModel().onDidChangeContent((e) => {
   setTimeout(() => {
     setCurrentFile(editorInstance.getValue());
     buildPreview();
+    handlePdfPreview();
     loading = false;
   }, 1000);
 });
@@ -145,6 +147,25 @@ document.getElementById("html").addEventListener("click", () => {
   a.click();
 });
 
+document.getElementById("pdf").addEventListener("click", async () => {
+  try {
+    const resp = await fetch("/generate-pdf", {
+      method: "POST",
+      headers: { "Content-Type": "text/html" },
+      body: iframeHTMLPassive,
+    });
+    if (!resp.ok) throw new Error("failed");
+    const blob = await resp.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "Faultier-CV.pdf";
+    a.click();
+  } catch (e) {
+    alert("PDF generation failed: " + e.message);
+  }
+});
+
+
 function saveStorageInBrowser() {
   localStorage.setItem("store", JSON.stringify(store));
 }
@@ -154,3 +175,60 @@ function getStorageFromBrowser() {
   if (store) return JSON.parse(store);
   return null;
 }
+
+const showPdfPreviewCheckbox = document.getElementById("showPdfPreview") as HTMLInputElement;
+
+// Function to handle PDF preview
+let pdfPreviewAbortController: AbortController | null = null;
+
+async function handlePdfPreview() {
+  // Cancel previous request if any
+  if (pdfPreviewAbortController) {
+    pdfPreviewAbortController.abort();
+  }
+  pdfPreviewAbortController = new AbortController();
+
+  if (showPdfPreviewCheckbox.checked) {
+    pdfPreview.classList.add("active");
+    try {
+      const resp = await fetch("/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "text/html" },
+        body: iframeHTMLPassive,
+        signal: pdfPreviewAbortController.signal,
+      });
+      if (!resp.ok) throw new Error("failed");
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+
+      // Remove previous preview content
+      pdfPreview.innerHTML = "";
+
+      // Create an <iframe> to show the PDF
+      const pdfIframe = document.createElement("iframe");
+      pdfIframe.src = url;
+      pdfIframe.width = "100%";
+      pdfIframe.height = "100%";
+      pdfIframe.style.border = "none";
+      pdfPreview.appendChild(pdfIframe);
+    } catch (e) {
+      if (e.name !== "AbortError") {
+        console.error("PDF preview failed");
+      }
+    }
+  } else {
+    // If unchecked, rebuild the normal preview
+    pdfPreview.classList.remove("active");
+    buildPreview();
+  }
+}
+
+// Listen for checkbox changes
+showPdfPreviewCheckbox.addEventListener("change", handlePdfPreview);
+
+window.addEventListener("resize", () => {
+  handlePdfPreview();
+});
+
+// Optionally trigger preview on load
+handlePdfPreview();

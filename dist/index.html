@@ -53,9 +53,21 @@
       margin-left: 3em;
     }
 
-    #preview {
+    #previewHost {
       height: calc(100% - 2.3em);
       overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      gap: 0.1em;
+    }
+
+    #previewHost > div {
+      width: 100%;
+      display: none;
+    }
+
+    #previewHost .active {
+      display: block;
     }
 
     iframe {
@@ -145,9 +157,19 @@
     <div class="actionButtons">
       <div id="save">Save</div>
       <div id="html">html</div>
+      <div id="pdf">pdf</div>
       <div id="import">Import</div>
+      <div>
+        <label>
+          <input type="checkbox" id="showPdfPreview" />
+          Show PDF Preview
+        </label>
+      </div>
     </div>
-    <div id="preview">Loading...</div>
+    <div id="previewHost">
+      <div id="preview" class="active">Loading...</div>
+      <div id="pdfPreview"></div>
+    </div>
   </div>
   <div id="warning">
     <h1>Warning</h1>
