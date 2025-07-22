@@ -200,7 +200,7 @@ async function handlePdfPreview() {
       headers: { "Content-Type": "text/html" },
       body: iframeHTMLPassive,
       signal: pdfPreviewAbortController.signal,
-      cache: "no-store" // optional: keep devtools cleaner
+      cache: "no-store"
     });
 
     if (!resp.ok) throw new Error("failed");
@@ -246,5 +246,20 @@ const debouncedChange = debounce(() => {
 editorInstance.getModel().onDidChangeContent(debouncedChange);
 
 
-// Optionally trigger preview on load
 handlePdfPreview();
+
+const isGithubDomain = /(^|\.)github\.com$/.test(window.location.hostname);
+
+if (isGithubDomain) {
+  const pdfPreviewBtn = document.getElementById("showPdfPreview") as HTMLInputElement;
+  const pdfDownloadBtn = document.getElementById("pdf") as HTMLButtonElement;
+
+  if (pdfPreviewBtn) {
+    pdfPreviewBtn.disabled = true;
+    pdfPreviewBtn.title = "PDF preview is disabled on GitHub domains";
+  }
+  if (pdfDownloadBtn) {
+    pdfDownloadBtn.disabled = true;
+    pdfDownloadBtn.title = "PDF download is disabled on GitHub domains";
+  }
+}
