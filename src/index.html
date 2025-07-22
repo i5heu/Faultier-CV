@@ -66,6 +66,10 @@
       display: none;
     }
 
+    #previewHost #pdfPreview.active ~ #preview {
+      display: none;
+    }
+
     #previewHost .active {
       display: block;
     }
@@ -167,8 +171,8 @@
       </div>
     </div>
     <div id="previewHost">
-      <div id="preview" class="active">Loading...</div>
       <div id="pdfPreview"></div>
+      <div id="preview" class="active">Loading...</div>
     </div>
   </div>
   <div id="warning">

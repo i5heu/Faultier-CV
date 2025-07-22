@@ -177,58 +177,74 @@ function getStorageFromBrowser() {
 }
 
 const showPdfPreviewCheckbox = document.getElementById("showPdfPreview") as HTMLInputElement;
-
-// Function to handle PDF preview
 let pdfPreviewAbortController: AbortController | null = null;
 
 async function handlePdfPreview() {
-  // Cancel previous request if any
-  if (pdfPreviewAbortController) {
+  if (!showPdfPreviewCheckbox.checked) {
+    pdfPreview.classList.remove("active");
+    buildPreview();
+    return;
+  }
+
+  // Abort ONLY if the previous one is still running
+  if (pdfPreviewAbortController && !pdfPreviewAbortController.signal.aborted) {
     pdfPreviewAbortController.abort();
   }
   pdfPreviewAbortController = new AbortController();
 
-  if (showPdfPreviewCheckbox.checked) {
-    pdfPreview.classList.add("active");
-    try {
-      const resp = await fetch("/generate-pdf", {
-        method: "POST",
-        headers: { "Content-Type": "text/html" },
-        body: iframeHTMLPassive,
-        signal: pdfPreviewAbortController.signal,
-      });
-      if (!resp.ok) throw new Error("failed");
-      const blob = await resp.blob();
-      const url = URL.createObjectURL(blob);
+  pdfPreview.classList.add("active");
 
-      // Remove previous preview content
-      pdfPreview.innerHTML = "";
+  try {
+    const resp = await fetch("/generate-pdf", {
+      method: "POST",
+      headers: { "Content-Type": "text/html" },
+      body: iframeHTMLPassive,
+      signal: pdfPreviewAbortController.signal,
+      cache: "no-store" // optional: keep devtools cleaner
+    });
 
-      // Create an <iframe> to show the PDF
-      const pdfIframe = document.createElement("iframe");
-      pdfIframe.src = url;
-      pdfIframe.width = "100%";
-      pdfIframe.height = "100%";
-      pdfIframe.style.border = "none";
-      pdfPreview.appendChild(pdfIframe);
-    } catch (e) {
-      if (e.name !== "AbortError") {
-        console.error("PDF preview failed");
-      }
+    if (!resp.ok) throw new Error("failed");
+
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+
+    pdfPreview.innerHTML = "";
+    const pdfIframe = document.createElement("iframe");
+    pdfIframe.src = url;
+    pdfIframe.width = "100%";
+    pdfIframe.height = "100%";
+    pdfIframe.style.border = "none";
+    pdfPreview.appendChild(pdfIframe);
+  } catch (e: any) {
+    if (e.name !== "AbortError") {
+      console.error("PDF preview failed", e);
     }
-  } else {
-    // If unchecked, rebuild the normal preview
-    pdfPreview.classList.remove("active");
-    buildPreview();
   }
 }
+
 
 // Listen for checkbox changes
 showPdfPreviewCheckbox.addEventListener("change", handlePdfPreview);
 
-window.addEventListener("resize", () => {
+const debounce = (fn: Function, ms: number) => {
+  let t: any;
+  return (...args: any[]) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), ms);
+  };
+};
+
+const throttledResize = debounce(handlePdfPreview, 400);
+window.addEventListener("resize", throttledResize);
+
+const debouncedChange = debounce(() => {
+  setCurrentFile(editorInstance.getValue());
+  buildPreview();
   handlePdfPreview();
-});
+}, 700);
+
+editorInstance.getModel().onDidChangeContent(debouncedChange);
+
 
 // Optionally trigger preview on load
 handlePdfPreview();
