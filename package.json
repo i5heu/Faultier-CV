@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "html2pdf": "node turnHtmlToPdf.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,8 @@
     "marked": "^4.1.1",
     "monaco-editor": "^0.34.1",
     "monaco-editor-webpack-plugin": "^7.0.1",
+    "puppeteer": "^24.14.0",
+    "puppeteer-core": "^24.14.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.74.0"
   },
