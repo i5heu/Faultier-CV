@@ -248,7 +248,7 @@ editorInstance.getModel().onDidChangeContent(debouncedChange);
 
 handlePdfPreview();
 
-const isGithubDomain = /(^|\.)github\.com$/.test(window.location.hostname);
+const isGithubDomain = /(^|\.)github\.io$/.test(window.location.hostname);
 
 if (isGithubDomain) {
   const pdfPreviewBtn = document.getElementById("showPdfPreview") as HTMLInputElement;
