@@ -32,7 +32,7 @@
     "puppeteer": "^24.14.0",
     "puppeteer-core": "^24.14.0",
     "style-loader": "^3.3.1",
-    "webpack": "^5.74.0"
+    "webpack": "^5.105.0"
   },
   "devDependencies": {
     "@types/markdown-it": "^12.2.3",
